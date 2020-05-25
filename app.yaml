@@ -1,0 +1,15 @@
+runtime: python37
+
+handlers:
+- url: /
+  static_files: frontend/index.html
+  upload: frontend/index.html
+  expiration: "5s"
+
+- url: /api/?(.*)/?$
+  script: auto
+
+- url: /(.*)
+  static_files: frontend/\1/index.html
+  upload: frontend/.*$
+  expiration: "5s"

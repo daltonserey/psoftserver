@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<body>
+  <a href="/">home</a> |
+  <a href="/signup">signup</a> |
+  <a href="/login">login</a> |
+  <a href="/dados">dados</a>
+
+  <h1>SIGNUP</h1>
+  <p>Crie sua conta aqui:</p>
+
+  <p>
+    username: <input id="username" type="text"><br>
+    senha: <input id="password" type="password"><br>
+    <button>Crie minha conta!</button>
+  </p>
+
+  <div></div>
+
+  <script>
+    let $username = document.querySelector('#username');
+    let $password = document.querySelector('#password');
+    let $button = document.querySelector('button');
+    let $msg = document.querySelector('div');
+
+    $button.addEventListener('click', async function () {
+      let credenciais = {
+        username: $username.value,
+        password: $password.value 
+      };
+
+      let resp = await fetch('/api/signup', {
+        method: 'POST',
+        body: JSON.stringify(credenciais)
+      });
+      let result = await resp.json();
+      $msg.innerHTML = `<p>Usuário criado com sucesso!</p>
+                        <p><a href="login">Faça login</a> ou volte pra <a href="/">tela principal</a></p>`;
+    });
+  </script>
+</body>
+</html>
