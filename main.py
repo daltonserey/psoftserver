@@ -14,8 +14,10 @@ authorized_tokens = {}
 
 def is_authorized(request):
     authorization = request.headers.get('Authorization')
-    scheme, token = authorization.split(" ", 1)
-    return token in authorized_tokens
+    if authorization:
+        scheme, token = authorization.split(" ", 1)
+
+    return authorization and token in authorized_tokens
 
 
 @app.route('/api/dados/')
