@@ -1,3 +1,4 @@
+import random
 import json
 import jwt
 
@@ -9,6 +10,18 @@ app = Flask(__name__)
 
 visits = 0
 users = {}
+
+@app.route('/api/dados/')
+def api_users():
+    global visits
+    visits += 1
+    response = Response(json.dumps({
+        "visits": visits,
+        "dados": [random.randint(0,100) for i in range(10)]
+    }), mimetype='text/json')
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
+
 
 @app.route('/api/users/')
 def api_users():
