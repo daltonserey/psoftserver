@@ -1,3 +1,4 @@
+import time
 import random
 import json
 import jwt
@@ -65,8 +66,8 @@ def api_login():
         return response
 
     # cenário "dia feliz"
-    import time
     token = jwt.encode({"timestamp": time.time()}, SECRET_FOR_JWT).decode()
+    authorized_tokens[token] = username
     response = Response(json.dumps({
         "visits": visits,
         "token": token
