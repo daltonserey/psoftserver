@@ -10,21 +10,19 @@ app = Flask(__name__)
 
 visits = 0
 users = {}
+authorized_tokens = {}
+
+def is_authorized(request):
+    authorization = request.headers.get('Authorization')
+    scheme, token = authorization.split(" ", 1)
+    return token in authorized_tokens
+
 
 @app.route('/api/dados/')
 def api_dados():
     global visits
     visits += 1
-    authorization = request.headers.get('Authorization')
-    if authorization:
-        response = Response(json.dumps({
-            "visits": visits,
-            "dados": [random.randint(0,100) for i in range(10)]
-        }), mimetype='text/json')
-        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-        return response
-
-    else:
+    if not is_authorized(request):
         response = Response(json.dumps({
             "visits": visits,
             "msg": "sorry, user must be authenticated",
@@ -33,7 +31,14 @@ def api_dados():
         response.status_code = 401
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         return response
-        
+
+    # cenário "dia feliz"
+    response = Response(json.dumps({
+        "visits": visits,
+        "dados": [random.randint(0,100) for i in range(10)]
+    }), mimetype='text/json')
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
 
 
 @app.route('/api/users/')
