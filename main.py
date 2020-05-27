@@ -15,12 +15,24 @@ users = {}
 def api_dados():
     global visits
     visits += 1
-    response = Response(json.dumps({
-        "visits": visits,
-        "dados": [random.randint(0,100) for i in range(10)]
-    }), mimetype='text/json')
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    return response
+    authorization = request.headers.get('Authorization')
+    if authorization:
+        response = Response(json.dumps({
+            "visits": visits,
+            "dados": [random.randint(0,100) for i in range(10)]
+        }), mimetype='text/json')
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        return response
+    else:
+        response = Response(json.dumps({
+            "visits": visits,
+            "msg": "sorry, user must be authenticated",
+            "error": 401
+        }), mimetype='text/json')
+        r.status_code = 401
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        return response
+        
 
 
 @app.route('/api/users/')
