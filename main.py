@@ -23,13 +23,14 @@ def api_dados():
         }), mimetype='text/json')
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         return response
+
     else:
         response = Response(json.dumps({
             "visits": visits,
             "msg": "sorry, user must be authenticated",
             "error": 401
         }), mimetype='text/json')
-        r.status_code = 401
+        response.status_code = 401
         response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
         return response
         
@@ -60,9 +61,9 @@ def signup():
             "msg": "user created successfully"
         }), mimetype='text/json')
     else:
-        r = Response(json.dumps({'msg': 'ops! user already exists'}))
-        r.status_code = 400
-        return r
+        response = Response(json.dumps({'msg': 'ops! user already exists'}))
+        response.status_code = 400
+        return response
 
 
 if __name__ == '__main__':
