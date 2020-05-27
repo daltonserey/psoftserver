@@ -12,7 +12,7 @@ visits = 0
 users = {}
 
 @app.route('/api/dados/')
-def api_users():
+def api_dados():
     global visits
     visits += 1
     response = Response(json.dumps({
