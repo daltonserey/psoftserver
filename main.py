@@ -6,11 +6,42 @@ from flask import Flask
 from flask import Response
 from flask import request
 
+SECRET_FOR_JWT = "minha senha secreta"
+
 app = Flask(__name__)
 
 visits = 0
-users = {}
-authorized_tokens = {}
+users = {
+    "fake": "123"
+}
+authorized_tokens = {
+    "123456": "fake"
+}
+
+def check_authentication(request):
+    authorization = request.headers.get('Authorization')
+    if authorization is None:
+        return None
+
+    if ' ' not in authorization:
+        return None
+
+    scheme, credentials = authorization.split(" ", 1)
+    if scheme != 'Basic':
+        return None
+ 
+    if ':' not in credentials:
+        return None
+
+    username, password = credentials.split(":", 1)
+    if username not in users:
+        return None
+
+    if users[username] != password:
+        return None
+
+    return username
+
 
 def is_authorized(request):
     authorization = request.headers.get('Authorization')
@@ -18,6 +49,32 @@ def is_authorized(request):
         scheme, token = authorization.split(" ", 1)
 
     return authorization and token in authorized_tokens
+
+
+@app.route('/api/login/')
+def api_login():
+    username = check_authentication(request)
+    if username is None:
+        response = Response(json.dumps({
+            "visits": visits,
+            "msg": "sorry, login failed",
+            "error": 401
+        }), mimetype='text/json')
+        response.status_code = 401
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        return response
+
+    # cenário "dia feliz"
+    import time
+    token = jwt.encode({"timestamp": time.time()}, SECRET_FOR_JWT).decode()
+    response = Response(json.dumps({
+        "visits": visits,
+        "token": token
+    }), mimetype='text/json')
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    return response
+
+
 
 
 @app.route('/api/dados/')
