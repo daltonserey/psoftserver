@@ -12,15 +12,32 @@
 
   <h1>LOGIN</h1>
 
-  <p>Aqui vamos implementar uma tela de login...</p>
+  <p>
+    username: <input id="username" type="text"><br>
+    password: <input id="password" type="password"><br>
+    <button>login</button>
+  </p>
 
-  <h3>Em que consiste o login?</h3>
+  <script>
+    let $username = document.querySelector('#username');
+    let $password = document.querySelector('#password');
+    let $button = document.querySelector('button');
 
-  <p>A funcionalidade de login deve permitir ao usuário
-  humano digitar suas credenciais (username e senha), deve
-  enviá-las para algum endpoint no servidor para
-  que sejam verificadas e deve baixar e armazenar uma
-  credencial de acesso (um token) para outras interações
-  com o servidor.</p>
+    $button.addEventListener('click', do_login);
+
+    async function do_login() {
+      let username = $username.value;
+      let password = $password.value;
+      let credentials = `Basic ${username}:${password}`;
+      console.log(credentials);
+      let resp = await fetch('https://psoftserver.nn.r.appspot.com/api/login/', {
+        headers: { 'Authorization': credentials }
+      });
+      let token = (await resp.json())['token'];
+      console.log(token);
+      localStorage.setItem('token', token);
+    }
+  </script>
+
 </body>
 </html>
