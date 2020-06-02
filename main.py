@@ -52,6 +52,27 @@ def is_authorized(request):
     return authorization and token in authorized_tokens
 
 
+@app.route('/api/logout/')
+def api_logout():
+    username = check_authentication(request)
+    if username is None:
+        response = Response(json.dumps({
+            "visits": visits,
+            "msg": "sorry, logout failed",
+            "error": 401
+        }), mimetype='text/json')
+        response.status_code = 401
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        return response
+
+    authorized_tokens.pop(username)
+    return Response(json.dumps({
+        "msg": "logout successful"
+    }), mimetype='text/json')
+
+
+
+
 @app.route('/api/login/')
 def api_login():
     username = check_authentication(request)
